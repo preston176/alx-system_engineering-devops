@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Script to display all active IPv4 addresses on the machine
+
+# Using ifconfig to get active IPv4 addresses
+# This works on Linux distributions that use ifconfig (like Ubuntu 20.04 LTS)
+ipv4_addresses=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+
+# Output the IPv4 addresses
+echo "$ipv4_addresses"

@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Script to listen on port 98 on localhost and display incoming data
+
+# Function to handle cleanup on script exit
+cleanup() {
+    echo "Cleaning up and exiting..."
+    # Kill the netcat process on exit
+    kill $nc_pid
+    exit 0
+}
+
+# Trap SIGINT (Ctrl+C) to call cleanup function
+trap cleanup SIGINT
+
+# Start listening on port 98
+echo "Listening on localhost port 98..."
+nc -l 127.0.0.1 98 &
+nc_pid=$!
+
+# Wait for netcat process to finish
+wait $nc_pid
