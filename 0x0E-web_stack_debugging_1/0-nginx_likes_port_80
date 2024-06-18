@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
 # This script installs Nginx, ensures it is running, and listening on port 80
 
+# Exit immediately if a command exits with a non-zero status
+set -e
+
 # Update package lists
 apt-get update
 
 # Install Nginx if it is not already installed
-if ! which nginx > /dev/null 2>&1; then
+if ! command -v nginx > /dev/null 2>&1; then
     apt-get install -y nginx
 fi
 
 # Ensure Nginx is configured to listen on port 80
-cat <<EOL > /etc/nginx/sites-available/default
+cat << 'EOL' > /etc/nginx/sites-available/default
 server {
     listen 80 default_server;
     listen [::]:80 default_server;
@@ -21,7 +24,7 @@ server {
     server_name _;
 
     location / {
-        try_files \$uri \$uri/ =404;
+        try_files $uri $uri/ =404;
     }
 }
 EOL
@@ -33,4 +36,9 @@ systemctl restart nginx
 systemctl enable nginx
 
 # Verify Nginx is running and listening on port 80
-curl -s localhost:80 > /dev/null && echo "Nginx is running and listening on port 80" || echo "Failed to start Nginx"
+if curl -s localhost:80 > /dev/null; then
+    echo "Nginx is running and listening on port 80"
+else
+    echo "Failed to start Nginx"
+    exit 1
+fi
